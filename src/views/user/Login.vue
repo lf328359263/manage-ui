@@ -124,8 +124,13 @@ export default {
           // loginParams.password = md5(values.password)
           loginParams.password = values.password
           Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
+            .then((res) => {
+              this.loginSuccess(res)
+            })
+            // .catch(err => {
+            //   console.log('登录失败')
+            //   this.requestFailed(err)
+            // })
             .finally(() => {
               state.loginBtn = false
             })
@@ -145,22 +150,22 @@ export default {
           description: `${timeFix()}，欢迎回来`
         })
       }, 1000)
-    },
-    requestFailed (err) {
-      if (err['status'] && err['status'] === '500') {
-        this.$notification['error']({
-          message: '错误',
-          description: ((err.response || {}).data || {}).message || err['msg'],
-          duration: 4
-        })
-      } else {
-        this.$notification['error']({
-          message: '错误',
-          description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
-          duration: 4
-        })
-      }
     }
+    // requestFailed (err) {
+    //   if (err['status'] && err['status'] === '500') {
+    //     this.$notification['error']({
+    //       message: '错误',
+    //       description: ((err.response || {}).data || {}).message || err['msg'],
+    //       duration: 4
+    //     })
+    //   } else {
+    //     this.$notification['error']({
+    //       message: '错误',
+    //       description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
+    //       duration: 4
+    //     })
+    //   }
+    // }
   }
 }
 </script>

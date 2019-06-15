@@ -38,7 +38,8 @@
                   required: true,
                   message: '请输入邮箱'
                 }
-              ]
+              ],
+              validateTrigger: 'onBlur'
             }
           ]"
         />
@@ -75,7 +76,8 @@
                 {
                   validator: compareToFirstPassword
                 }
-              ]
+              ],
+              validateTrigger: 'onBlur'
             }
           ]"
           type="password"
@@ -207,11 +209,15 @@ export default {
       if (this.id > 0) {
         tmpUser.id = this.id
       }
-      tmpUser.authorities = this.targetKeys
-      console.log(tmpUser)
+      tmpUser.authorities = []
+      this.targetKeys.forEach(i => {
+        tmpUser.authorities.push({ 'id': i })
+      })
       saveUser(tmpUser).then(res => {
-        if (res['status'] && res['status'] === '1') {
-          // this.$router.push('roles')
+        if (res.status && res.status === '200') {
+          this.$router.push({
+            name: 'users'
+          })
         }
       }).catch(err => {
         this.$notification['error']({
@@ -219,9 +225,6 @@ export default {
           description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
           duration: 4
         })
-      })
-      this.$router.push({
-        name: 'users'
       })
     },
     handleConfirmBlur (e) {

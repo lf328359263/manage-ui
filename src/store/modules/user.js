@@ -38,13 +38,13 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const status = response['status']
-          if (status === '1') {
+          if (status === '200') {
             const result = response['data']
             Vue.ls.set(ACCESS_TOKEN, result, 7 * 24 * 60 * 60 * 1000)
             commit('SET_TOKEN', result)
             resolve()
           } else {
-            throw response
+            throw new Error(response)
           }
         }).catch(error => {
           reject(error)
@@ -96,6 +96,7 @@ const user = {
         commit('SET_ROLES', [])
         Vue.ls.remove(ACCESS_TOKEN)
 
+        resolve()
         // logout(state.token).then(() => {
         //   resolve()
         // }).catch(() => {

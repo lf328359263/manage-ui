@@ -11,25 +11,26 @@ import {
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://localhost:8440/', // api base_url
+  baseURL: 'http://47.95.216.127:8440/', // api base_url
+  // baseURL: 'http://192.168.10.188:8440/', // api base_url
   timeout: 6000 // 请求超时时间
 })
 
 const err = (error) => {
   if (error.response) {
-    console.log(error.response)
     const data = error.response.data
     const token = Vue.ls.get(ACCESS_TOKEN)
-    if (error.response.status === 403) {
+    if (data.status === '403') {
       notification.error({
         message: 'Forbidden',
-        description: data.message
+        description: data.msg
       })
     }
-    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+    // if (data.status === '401' && !(data.result && data.result.isLogin)) {
+    if (data.status === '401') {
       notification.error({
-        message: 'Unauthorized',
-        description: 'Authorization verification failed'
+        message: '认证失败',
+        description: data.msg
       })
       if (token) {
         store.dispatch('Logout').then(() => {
@@ -49,6 +50,7 @@ service.interceptors.request.use(config => {
   if (token) {
     // config.headers['Access-Token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
     config.headers['Authorization'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+    // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
   }
   return config
 }, err)

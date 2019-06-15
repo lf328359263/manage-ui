@@ -46,6 +46,33 @@ export const asyncRouterMap = [
             name: 'services',
             component: () => import('@/views/micro/ServiceList'),
             meta: { title: '服务列表', keepAlive: true }
+          },
+          {
+            path: '/micro/config',
+            name: 'service_config',
+            component: () => import('@/views/micro/ConfigList'),
+            meta: { title: '配置中心', keepAlive: true }
+          },
+          {
+            path: '/micro/route',
+            name: 'service_route',
+            component: () => import('@/views/micro/RouteList'),
+            meta: { title: '路由配置', keepAlive: true }
+          }
+        ]
+      },
+      {
+        path: '/flink',
+        name: 'flink',
+        redirect: '/flink/overview',
+        component: RouteView,
+        meta: { title: '实时平台', keepAlive: true, icon: 'global', roles: [ 'ROLE_FLINK' ] },
+        children: [
+          {
+            path: '/flink/overview',
+            name: 'flink_overview',
+            component: () => import('@/views/flink/Overview'),
+            meta: { title: '实时平台', keepAlive: true }
           }
         ]
       },
@@ -114,19 +141,19 @@ export const asyncRouterMap = [
             path: '/iframe/doc',
             name: 'bi_doc',
             component: IFrameView,
-            meta: { title: '内部文档', keepAlive: false, url: 'http://192.168.10.51:4000' }
+            meta: { title: '内部文档', keepAlive: false, url: 'http://192.168.10.51:4000/bi_book' }
           },
           {
             path: '/iframe/opendoc',
             name: 'open_doc',
             component: IFrameView,
-            meta: { title: '外部文档', keepAlive: false, url: 'http://192.168.10.51:4001' }
+            meta: { title: '外部文档', keepAlive: false, url: 'http://192.168.10.51:4000/open_doc' }
           },
           {
             path: '/iframe/sentinel',
             name: 'sentinel',
             component: IFrameView,
-            meta: { title: '流量卫兵', keepAlive: false, url: 'http://10.8.26.202:9090' }
+            meta: { title: '流量卫兵', keepAlive: false, url: 'http://192.168.10.186:9090' }
           }
         ]
       },

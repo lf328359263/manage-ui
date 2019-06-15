@@ -35,7 +35,7 @@
             <template slot="operation" slot-scope="text, record">
               <div>
                 <a-button style="margin-right: 10px" size="small" @click="handleEdit(record)">编辑</a-button>
-                <a-button style="margin-right: 10px" size="small" type="danger" @click="handleDelete(record.id)">删除</a-button>
+                <a-button style="margin-right: 10px" size="small" type="danger" @click="handleDelete(record.ext)">删除</a-button>
               </div>
             </template>
           </a-table>
@@ -163,7 +163,9 @@ export default {
       this.visible = true
     },
     handleOk (e) {
-      console.log(this.formChild.getFieldsValue())
+      if (!this.role.permissions) {
+        this.role.permissions = []
+      }
       this.role.permissions.push(this.formChild.getFieldsValue())
       this.loading = true
       setTimeout(() => {
@@ -188,8 +190,7 @@ export default {
       tmpRole.permissions = this.role.permissions
       saveRole(tmpRole)
         .then(res => {
-          if (res['status'] && res['status'] === '1') {
-            console.log('保存成功')
+          if (res['status'] && res['status'] === '200') {
             this.$router.push({
               name: 'roles'
             })
@@ -198,13 +199,13 @@ export default {
           console.log(err)
           this.$notification['error']({
             message: '错误',
-            description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
+            description: err.response.msg || '请求出现错误，请稍后再试',
             duration: 4
           })
         })
     },
     handleDelete (record) {
-      this.role.permissions = this.role.permissions.filter(p => p.id !== record)
+      this.role.permissions = this.role.permissions.filter(p => p.ext !== record)
     },
     addPermission (e) {
       console.log(this.formChild.getFieldsValue())

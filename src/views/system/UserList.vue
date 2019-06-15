@@ -22,8 +22,8 @@
       <template slot="operation" slot-scope="text, record">
         <div>
           <a-button style="margin-right: 10px" size="small" @click="handleEdit(record)">编辑</a-button>
-          <a-button style="margin-right: 10px" size="small" type="primary" @click="handlePassword(record)">重置密码</a-button>
-          <a-button style="margin-right: 10px" size="small" type="danger" @click="handleDelete(record.id)">删除</a-button>
+          <a-button style="margin-right: 10px" size="small" type="primary" @click="handlePasswordConfirm(record, handlePassword)">重置密码</a-button>
+          <a-button style="margin-right: 10px" size="small" type="danger" @click="handleDeleteConfirm(record, handleDelete)">删除</a-button>
         </div>
       </template>
     </a-table>
@@ -32,7 +32,7 @@
 
 <script>
 // import { getRoleList, getServiceList } from '@/api/manage'
-import { getUsers, deleteUser } from '@/api/admin'
+import { getUsers, deleteUser, initPassword } from '@/api/admin'
 
 export default {
   data () {
@@ -107,12 +107,52 @@ export default {
       })
     },
     handlePassword (record) {
-      console.log('重置密码')
+      initPassword(record.username).then(res => {
+        if (res.status && res.status === '200') {
+          this.$notification.success({
+            message: '密码初始化',
+            description: '成功'
+          })
+        } else {
+          this.$notification.error({
+            message: '错误',
+            description: res.msg
+          })
+        }
+      })
+    },
+    handlePasswordConfirm (record, func) {
+      const nickName = record.nickname
+      this.$confirm({
+        title: '请确认',
+        content: '确定要初始化 ' + nickName + ' 的密码吗？',
+        onOk () {
+          func(record.username)
+        },
+        onCancel () {}
+      })
+    },
+    handleDeleteConfirm (record, func) {
+      const nickName = record.nickname
+      this.$confirm({
+        title: '请确认',
+        content: '确定要删除用户 ' + nickName + ' 吗？',
+        onOk () {
+          func(record.id)
+        },
+        onCancel () {}
+      })
     },
     handleDelete (record) {
-      deleteUser({ id: record }).then(res => {
-        if (res['status'] && res['status'] === '1') {
-          // this.$router.push('roles')
+      deleteUser(record).then(res => {
+        if (res['status'] && res['status'] === '200') {
+          this.start()
+        } else {
+          this.$notification['error']({
+            message: '错误',
+            description: res.msg,
+            duration: 4
+          })
         }
       }).catch(err => {
         this.$notification['error']({
@@ -121,11 +161,6 @@ export default {
           duration: 4
         })
       })
-      setTimeout(() => {
-        this.start()
-        this.loading = false
-        this.selectedRowKeys = []
-      }, 200)
     }
   },
   watch: {

@@ -98,22 +98,27 @@ export default {
       })
     },
     handleDelete (record) {
-      deleteRole({ id: record }).then(res => {
-        if (res['status'] && res['status'] === '1') {
+      deleteRole(record).then(res => {
+        if (res['status'] && res['status'] === '200') {
           const tmpData = this.loadData.filter(data => {
             return data.id !== record
           })
           this.loadData = tmpData
+          this.start()
+        } else {
+          this.$notification['error']({
+            message: '错误',
+            description: res.msg || '请求出现错误，请稍后再试',
+            duration: 4
+          })
         }
       }).catch(err => {
-        console.log(err)
         this.$notification['error']({
           message: '错误',
           description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
           duration: 4
         })
       })
-      // this.start()
     }
   },
   watch: {
